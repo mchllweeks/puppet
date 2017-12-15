@@ -2,6 +2,10 @@ test_name 'puppet module list (with environment)'
 require 'puppet/acceptance/module_utils'
 extend Puppet::Acceptance::ModuleUtils
 
+agents.each do |agent|
+  skip_test('Skipping EC2 Hosts') if fact_on(agent, 'ec2_metadata')
+end
+
 tmpdir = master.tmpdir('module-list-with-environment')
 
 step 'Setup'

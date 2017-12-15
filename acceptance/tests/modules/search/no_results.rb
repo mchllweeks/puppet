@@ -1,5 +1,9 @@
 test_name 'puppet module search should print a reasonable message for no results'
 
+agents.each do |agent|
+  skip_test('Skipping EC2 Hosts') if fact_on(agent, 'ec2_metadata')
+end
+
 tag 'audit:low',
     'audit:unit'
 

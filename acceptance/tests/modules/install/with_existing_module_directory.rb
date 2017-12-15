@@ -2,6 +2,10 @@ test_name "puppet module install (with existing module directory)"
 require 'puppet/acceptance/module_utils'
 extend Puppet::Acceptance::ModuleUtils
 
+agents.each do |agent|
+  skip_test('Skipping EC2 Hosts') if fact_on(agent, 'ec2_metadata')
+end
+
 tag 'audit:low',       # Install via pmt is not the primary support workflow
     'audit:unit',
 

@@ -1,5 +1,9 @@
 test_name 'puppet module changes (on a module with a removed file)'
 
+agents.each do |agent|
+  skip_test('Skipping EC2 Hosts') if fact_on(agent, 'ec2_metadata')
+end
+
 tag 'audit:medium',
     'audit:acceptance',
     'audit:refactor'   # Master is not required for this test. Replace with agents.each

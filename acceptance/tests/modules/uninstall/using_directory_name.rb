@@ -1,5 +1,9 @@
 test_name "puppet module uninstall (using directory name)"
 
+agents.each do |agent|
+  skip_test('Skipping EC2 Hosts') if fact_on(agent, 'ec2_metadata')
+end
+
 tag 'audit:low',       # Module management via pmt is not the primary support workflow
     'audit:acceptance',
     'audit:refactor'   # Master is not required for this test. Replace with agents.each

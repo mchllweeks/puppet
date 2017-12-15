@@ -18,6 +18,8 @@ teardown do
 end
 
 agents.each do |agent|
+  # Skipping tests if facter finds this is an ec2 host; See PUP-7774.
+  skip_test('Skipping EC2 Hosts') if fact_on(agent, 'ec2_metadata')
   step 'setup'
   stub_forge_on(agent)
 
