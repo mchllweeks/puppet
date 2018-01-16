@@ -8,10 +8,7 @@ tag 'audit:medium',
                        # host running this, or require special permissions.
 
 confine :to, :platform => /el-|centos|fedora|debian|sles|ubuntu-v/
-# Skipping tests if facter finds this is an ec2 host, Amazon Linux does not have systemd
-agents.each do |agent|
-  skip_test('Skipping EC2 Hosts') if fact_on(agent, 'ec2_metadata')
-end
+
 # osx covered by launchd_provider.rb
 # ubuntu-[a-u] upstart covered by ticket_14297_handle_upstart.rb
 
@@ -25,6 +22,8 @@ package_name = {'el'     => 'httpd',
 
 agents.each do |agent|
   platform = agent.platform.variant
+  osname = on(agent, facter('os.name')).stdout.chomp
+  osreleasefull = on(agent, facter('os.release.full')).stdout.chomp.to_f
   majrelease = on(agent, facter('operatingsystemmajrelease')).stdout.chomp.to_i
 
   init_script_systemd = "/usr/lib/systemd/system/#{package_name[platform]}.service"
@@ -74,6 +73,7 @@ agents.each do |agent|
   # replaced with a discrete amazon condition if/when Beaker understands
   # amazon as a platform. BKR-1148
   is_sysV = ((platform == 'centos' || platform == 'el') && (majrelease < 7 || majrelease > 2016)) ||
+              (osname == 'Amazon' && osreleasefull < 2017.12) ||
               platform == 'debian' || platform == 'ubuntu' ||
              (platform == 'sles'                        && majrelease < 12)
   apply_manifest_on(agent, manifest_service_disabled, :catch_failures => true)
