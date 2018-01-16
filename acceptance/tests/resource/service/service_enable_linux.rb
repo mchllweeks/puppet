@@ -8,6 +8,10 @@ tag 'audit:medium',
                        # host running this, or require special permissions.
 
 confine :to, :platform => /el-|centos|fedora|debian|sles|ubuntu-v/
+# Skipping tests if facter finds this is an ec2 host, Amazon Linux does not have systemd
+agents.each do |agent|
+  skip_test('Skipping EC2 Hosts') if fact_on(agent, 'ec2_metadata')
+end
 # osx covered by launchd_provider.rb
 # ubuntu-[a-u] upstart covered by ticket_14297_handle_upstart.rb
 
